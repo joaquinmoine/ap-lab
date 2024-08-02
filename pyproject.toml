@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "ap-lab"
+version = "0.1.0"
+description = "Anabella Pautasso Lab"
+authors = ["joaquinmoine <joaquinmoine@gmail.com>"]
+readme = "README.md"
+packages = [
+    {include = "patients", from = "ap_lab"},
+    {include = "health_insurances", from = "ap_lab"},
+    {include = "reports", from = "ap_lab"},
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "^5.0.7"
+django-phonenumber-field = {extras = ["phonenumbers"], version = "^8.0.0"}
+django-extensions = "^3.2.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
