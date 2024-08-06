@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # Third apps
     'django_extensions',
     'phonenumber_field',
+    'rest_framework',
     # Owner apps
     'health_insurances',
     'patients',

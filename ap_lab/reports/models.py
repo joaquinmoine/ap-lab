@@ -28,7 +28,7 @@ class Report(TimeStampedModel):
     measurements = models.ManyToManyField("reports.Measurement", through="reports.ReportMeasurement", related_name="reports", blank=True)
     patient = models.ForeignKey("patients.Patient", on_delete=models.PROTECT, related_name="reports")
     delivery_datetime = models.DateTimeField(_("Delivery Datetime"), blank=True, null=True)
-    health_insurances = models.ForeignKey("health_insurances.HealthInsurance", on_delete=models.PROTECT, related_name="reports", blank=True, null=True)
+    health_insurance = models.ForeignKey("health_insurances.HealthInsurance", on_delete=models.PROTECT, related_name="reports", blank=True, null=True)
     coinsurance_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name=_("Coinsurance price"))
     deposit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name=_("Deposit"))
     receipt = models.FileField(_("Receipt"), upload_to="receipts", null=True, blank=True)
@@ -40,15 +40,38 @@ class Report(TimeStampedModel):
 
 
 class ReportPraxis(TimeStampedModel):
-    report = models.ForeignKey("reports.Report", on_delete=models.PROTECT)
-    praxis = models.ForeignKey("reports.Praxis", on_delete=models.PROTECT)
+    report = models.ForeignKey("reports.Report", on_delete=models.CASCADE)
+    praxis = models.ForeignKey("reports.Praxis", on_delete=models.CASCADE)
     status = models.CharField(choices=ReportPraxisStatus.choices, default=ReportPraxisStatus.PENDING, max_length=2)
+
+    class Meta:
+        unique_together = (("report", "praxis"),)
+
+    def add_measurements(self):
+        for measurement in self.praxis.measurements.all():
+            ReportMeasurement.objects.create(report=self.report, measurement=measurement)
+
+    def delete_measurements(self):
+        for measurement in self.praxis.measurements.all():
+            rm = ReportMeasurement.objects.get(report=self.report, measurement=measurement)
+            rm.delete()
+
+    def save(self, **kwargs):
+        super().save(**kwargs)
+        self.add_measurements()
+
+    def delete(self, **kwargs):
+        self.delete_measurements()
+        super().delete(**kwargs)
 
 
 class ReportMeasurement(TimeStampedModel):
-    report = models.ForeignKey("reports.Report", on_delete=models.PROTECT)
-    measurements = models.ForeignKey("reports.Measurement", on_delete=models.PROTECT)
+    report = models.ForeignKey("reports.Report", on_delete=models.CASCADE)
+    measurement = models.ForeignKey("reports.Measurement", on_delete=models.CASCADE)
     result = models.CharField(max_length=255, verbose_name=_("Result"), blank=True, null=True)
+
+    class Meta:
+        unique_together = (("report", "measurement"),)
 
 
 class Measurement(TimeStampedModel):

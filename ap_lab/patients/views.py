@@ -1,3 +1,16 @@
-from django.shortcuts import render
+from rest_framework import filters, viewsets
 
-# Create your views here.
+from patients.models import Patient, Membership
+from patients.serializers import PatientSerializer, MembershipSerializer
+
+
+class PatientViewSet(viewsets.ModelViewSet):
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['first_name__icontains', 'last_name__icontains', 'identification_number__icontains']
+
+
+class MembershipViewSet(viewsets.ModelViewSet):
+    queryset = Membership.objects.all()
+    serializer_class = MembershipSerializer()
