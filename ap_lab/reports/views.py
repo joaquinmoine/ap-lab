@@ -1,10 +1,13 @@
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, permissions
+from knox.auth import TokenAuthentication
 
 from reports.models import Report, ReportPraxis, Praxis, ReportMeasurement
 from reports.serializers import ReportSerializer, ReportMeasurementSerializer, ReportPraxisSerializer, PraxisSerializer
 
 
 class ReportViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAdminUser]
     queryset = Report.objects.all()
     serializer_class = ReportSerializer
     filter_backends = [filters.SearchFilter]
@@ -15,6 +18,8 @@ class ReportViewSet(viewsets.ModelViewSet):
 
 
 class ReportPraxisViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAdminUser]
     queryset = ReportPraxis.objects.all()
     serializer_class = ReportPraxisSerializer
 
@@ -26,6 +31,8 @@ class ReportPraxisViewSet(viewsets.ModelViewSet):
 
 
 class ReportMeasurementViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAdminUser]
     queryset = ReportMeasurement.objects.all()
     serializer_class = ReportMeasurementSerializer
 
@@ -37,6 +44,8 @@ class ReportMeasurementViewSet(viewsets.ModelViewSet):
 
 
 class PraxisViewSet(viewsets.ReadOnlyModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAdminUser]
     queryset = Praxis.objects.all()
     filter_backends = [filters.SearchFilter]
     search_fields = ['code__icontains', 'name__icontains']

@@ -30,4 +30,5 @@ router.registry.extend(reports_router.registry)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path(r'api/auth/', include('knox.urls'))
 ]

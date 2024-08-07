@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'phonenumber_field',
     'rest_framework',
+    'knox',
     # Owner apps
     'health_insurances',
     'patients',
